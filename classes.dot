@@ -1,0 +1,5 @@
+digraph "classes" {
+rankdir=BT
+charset="utf-8"
+"logic.Logic" [color="black", fontcolor="black", label=<{Logic|<br ALIGN="LEFT"/>|generate_random_matrix(size)<br ALIGN="LEFT"/>tsp_branch_and_bound(graph)<br ALIGN="LEFT"/>}>, shape="record", style="solid"];
+}
