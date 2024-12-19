@@ -55,30 +55,47 @@ class Tkinter():
         self.matrix_display.config(state="disabled")
 
 def graph_show():
-    # Пример использования с графическим представлением
-    graph = np.array(array)
+    """
+    Генерация матрицы конфликтов и оптимизация параллельной программы.
 
-    G = nx.from_numpy_array(np.array(graph))
+    :return: Минимальное количество ресурсов и раскраска
+    """
+    # Пример использования с графическим представлением
+    graph = np.array(array)  # Здесь используйте вашу матрицу конфликтов
+
+    G = nx.from_numpy_array(graph)
     pos = nx.spring_layout(G)
-    plt.subplots(num=f"Задача коммивояжёра. Метод ветвей и границ.")
-    nx.draw(G, pos, with_labels=True, alpha=0.5, font_size=16, )
+
+    # Подготовка графического окна
+    plt.figure(num="Оптимизация параллельной программы. Рекурсивный алгоритм оптимальной раскраски.")
+    nx.draw(G, pos, with_labels=True, alpha=0.5, font_size=16)
+
     # Выводим значения весов ребер
     edge_labels = nx.get_edge_attributes(G, 'weight')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, )
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
 
     ts = time()
-    tour, cost = logic.tsp_branch_and_bound(graph)
+    cost, node_colors = logic.graph_coloring_optimization(graph)
+
+    # Выводим раскраску узлов (задач)
+    print(node_colors)
+    print(cost)
 
     # Выводим информацию о количестве точек и длине пути
-    info_text = f"Path{tour}\nBest path({cost})\nNodes({len(tour)})\nTime: {round(time() - ts, 7)}"
+    info_text = f"Минимальное количество ресурсов (процессоров/регистров): {cost}\n" \
+                f"Раскраска узлов (задач): {node_colors}\n" \
+                f"Время: {round(time() - ts, 7)}"
     plt.text(0.05, 0.98, info_text, transform=plt.gca().transAxes, va='top', ha='left',
              bbox=dict(facecolor='lightblue', edgecolor='black', boxstyle='round,pad=0.5'))
 
-    path_edges = list(zip(tour, tour[1:] + [tour[0]]))
-    nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='b', width=2, arrows=True,
-                           arrowstyle='->, head_width=0.5, head_length=0.8')  # Выделение оптимального маршрута красным цветом
+    # Определим цвета для каждого ресурса (процессора/регистра)
+    # Цвета для каждого узла в графе
+    node_color_map = [node_colors[node] for node in G.nodes]
 
-    print("Best tour:", tour)
-    print("Cost:", cost)
+    # Рисуем узлы с раскраской
+    nx.draw_networkx_nodes(G, pos, node_color=node_color_map, cmap=plt.cm.rainbow, node_size=500)
+
+    # Рисуем рёбра
+    nx.draw_networkx_edges(G, pos, width=2, alpha=0.5)
 
     plt.show()
